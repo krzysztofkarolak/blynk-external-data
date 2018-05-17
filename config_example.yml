@@ -1,0 +1,21 @@
+#RENAME THIS FILE TO config.yml
+
+server:
+    name: "My Data Server"
+    timezone: "Europe/Berlin"
+    lang: "pl" # en or pl are supported for weather data
+    units: "metric" # metric or imperial
+location:
+    latitude: "52.526400"
+    longitude: "13.397261"
+    owmCityId: "2950159" # OpenWeatherMap City Id
+    yahooCityWOEID: "638242"
+apiKeys:
+    airlyKey: "yourapikey" # You can request your API Key on airly.eu
+    owmKey: "yourapikey" # You can request your API Key on openweathermap.org
+    blynkKey: "yourapikey" # Blynk Project Api Key
+blynkServer:
+    hostname: "blynk-cloud.com" # Your Blynk Server URL
+    port: "9443" # Default HTTPS Api port
+devices:
+    fan: true # If there is a fan in your temperature sensor, leave this option true

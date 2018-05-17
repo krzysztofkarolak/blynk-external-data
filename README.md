@@ -68,3 +68,21 @@ Set a Heroku Scheduler plugin with the following command:
 ```sh
 python3 weather.py
 ```
+
+## Blynk Project Configuration
+
+Default Virtual Pins are listed below:
+
+- V40: PM 2.5
+- V41: PM 10
+- V42: Air Pollution Level
+- V43: Temperature
+- V44: Air CAQI Pollution Level
+- V45: Fan (favourable conditions) [0 or 1]
+- V46: Date and time of data update
+- V47: Wind Speed
+- V48: Wind Direction
+- V49: Pressure
+- V70: OWM Weather Conditions
+- V71: Server Name
+- V72: Yahoo Weather Conditions

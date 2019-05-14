@@ -18,4 +18,4 @@ blynkServer:
     hostname: "blynk-cloud.com" # Your Blynk Server URL
     port: "9443" # Default HTTPS Api port
 devices:
-    fan: true # If there is a fan in your temperature sensor, leave this option true
+    fan: true # If there is a fan with your temperature sensor, leave this option set to true

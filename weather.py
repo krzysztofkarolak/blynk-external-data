@@ -7,7 +7,7 @@ from pytz import timezone
 
 
 # CONFIG FILE
-with open("config.yml", 'r') as ymlfile:
+with open("/home/blynk/smog/config.yml", 'r') as ymlfile:
     cfg = yaml.load(ymlfile)
 
 # SERVER INFO
@@ -50,12 +50,13 @@ oCond = oData["weather"][0]["description"]
 
 # YAHOO WEATHER
 
-yUrl = 'https://query.yahooapis.com/v1/public/yql?q=select%20item.condition%20from%20weather.forecast%20where%20woeid%20%3D%20' + yahooCityWOEID + '%20and%20u%3D\'c\'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
-yResp = requests.get(url=yUrl)
-yData = json.loads(yResp.text)
-yCondition = int(yData["query"]["results"]["channel"]["item"]["condition"]["code"])
-yTemp = yData["query"]["results"]["channel"]["item"]["condition"]["temp"]
-yDate = yData["query"]["results"]["channel"]["item"]["condition"]["date"]
+#yUrl = 'https://query.yahooapis.com/v1/public/yql?q=select%20item.condition%20from%20weather.forecast%20where%20woeid%20%3D%20' + yahooCityWOEID + '%20and%20u%3D\'c\'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
+#yResp = requests.get(url=yUrl)
+#yData = json.loads(yResp.text)
+#yCondition = int(yData["query"]["results"]["channel"]["item"]["condition"]["code"])
+#yTemp = yData["query"]["results"]["channel"]["item"]["condition"]["temp"]
+#yDate = yData["query"]["results"]["channel"]["item"]["condition"]["date"]
+yCondition = 0
 
 # conditions to turn fan based on Yahoo codes
 if cfg["devices"]["fan"]:
@@ -101,20 +102,48 @@ if serverLang is "pl":
 
 
 # AIRLY
-airlyUrl = 'https://airapi.airly.eu/v1/mapPoint/measurements?latitude=' + latitude + '&longitude=' + longitude + '&historyHours=1&historyResolutionHours=1&apikey=' + airlyApiKey
-airlyResp = requests.get(url=airlyUrl)
+airlyUrl = 'https://airapi.airly.eu/v2/measurements/point?lat=' + latitude + '&lng=' + longitude + '&historyHours=1&historyResolutionHours=1&apikey=' + airlyApiKey
+airlyHeaders = {'Accept-Language': serverLang}
+airlyResp = requests.get(airlyUrl, headers=airlyHeaders)
 airlyData = json.loads(airlyResp.text)
 
-dpm25 = str(int(airlyData["currentMeasurements"]["pm25"]))
-dpm10 = str(int(airlyData["currentMeasurements"]["pm10"]))
-dpollution = str(int(airlyData["currentMeasurements"]["pollutionLevel"]))
-dcond = str(int(airlyData["currentMeasurements"]["airQualityIndex"]))
+for airlyResult in airlyData["current"]["values"]:
+        if airlyResult["name"] == "PM1":
+                airlyPM1 = str(int(airlyResult["value"]))
+        if airlyResult["name"] == "PM25":
+                airlyPM25 = str(int(airlyResult["value"]))
+        if airlyResult["name"] == "PM10":
+                airlyPM10 = str(int(airlyResult["value"]))
+        if airlyResult["name"] == "PRESSURE":
+                airlyPressure = str(int(airlyResult["value"]))
+        if airlyResult["name"] == "HUMIDITY":
+                airlyHumidity = str(int(airlyResult["value"]))
+        if airlyResult["name"] == "TEMPERATURE":
+                airlyTemp = int(airlyResult["value"])
 
+# AIRLY CAQI - Air Quality Index
+airlyCAQI = str(int(airlyData["current"]["indexes"][0]["value"]))
+airlyLevel = str(airlyData["current"]["indexes"][0]["level"])
+airlyDescription = str(airlyData["current"]["indexes"][0]["description"])
+airlyColor = str(airlyData["current"]["indexes"][0]["color"])
+
+# AIRLY Air Quality Level from string to integer
+def airlyLevelInt(airlyLevel):
+    return {
+        "VERY_LOW": 1,
+        "LOW": 2,
+        "MEDIUM": 3,
+        "HIGH": 4,
+        "VERY_HIGH": 5,
+        "EXTREME": 6
+    }.get(airlyLevel, str(airlyLevel))
+
+airlyLevel = airlyLevelInt(airlyLevel)
 
 # Select available temperature data
 bTemp = None
-if "temperature" in airlyData["currentMeasurements"]:
-        bTemp = airlyData["currentMeasurements"]["temperature"]
+if airlyTemp:
+        bTemp = airlyTemp
         bTemp = str("%.1f" % bTemp)
 else:
         if "temp" in oData["main"]:
@@ -125,26 +154,45 @@ else:
                 else:
                     logging.warning("No temperature data available!")
 
+# Select available pressure data
+bPressure = None
+if airlyPressure:
+	bPressure = airlyPressure
+else:
+	if oPressure:
+		bPressure = oPressure
+	else:
+		logging.warning("No pressure data available!")
+
+
 logging.info(fDate)
-logging.info("PM2.5:" + dpm25)
-logging.info("PM10:" + dpm10)
-logging.info("Pollution:" + dpollution)
+logging.info("PM2.5:" + airlyPM25)
+logging.info("PM10:" + airlyPM10)
+logging.info("Pollution:" + airlyCAQI)
 if bTemp:
     logging.info("Temp:" + bTemp)
-logging.info("Air condition:" + dcond)
+logging.info("Air condition:" + airlyDescription)
 
 # SEND DATA TO BLYNK
 blynkUrl = 'https://' + blynkHostname +':' + blynkPort + '/' + blynkApiKey +'/update/'
-if dpm25:
-    requests.get(blynkUrl + "V40?value=" + dpm25)
-if dpm10:
-    requests.get(blynkUrl + "V41?value=" + dpm10)
-if dpollution:
-    requests.get(blynkUrl + "V42?value=" + dpollution)
+if airlyColor:
+    requests.get(blynkUrl + "V36?value=" + airlyColor)
+if airlyDescription:
+    requests.get(blynkUrl + "V37?value=" + airlyDescription)
+if airlyHumidity:
+    requests.get(blynkUrl + "V38?value=" + airlyHumidity)
+if airlyPM1:
+    requests.get(blynkUrl + "V39?value=" + airlyPM1)
+if airlyPM25:
+    requests.get(blynkUrl + "V40?value=" + airlyPM25)
+if airlyPM10:
+    requests.get(blynkUrl + "V41?value=" + airlyPM10)
+if airlyLevel:
+    requests.get(blynkUrl + "V42?value=" + str(airlyLevel))
 if bTemp:
     requests.get(blynkUrl + "V43?value=" + bTemp)
-if dcond:
-    requests.get(blynkUrl + "V44?value=" + dcond)
+if airlyCAQI:
+    requests.get(blynkUrl + "V44?value=" + airlyCAQI)
 if oCond:
     requests.get(blynkUrl + "V70?value=" + oCond)
 if yCondition:
@@ -153,8 +201,8 @@ if oWindspeed:
     requests.get(blynkUrl + "V47?value=" + oWindspeed)
 if oWinddeg:
     requests.get(blynkUrl + "V48?value=" + oWinddeg)
-if oPressure:
-    requests.get(blynkUrl + "V49?value=" + oPressure)
+if bPressure:
+    requests.get(blynkUrl + "V49?value=" + bPressure)
 if fanState:
     requests.get(blynkUrl + "V45?value=" + fanState)
 requests.get(blynkUrl + "V46?value=" + fDate)

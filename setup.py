@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='blynk-external-data',
-    version='1.1',
+    version='1.2',
     packages=[''],
     url='',
     license='',

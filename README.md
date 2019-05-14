@@ -16,13 +16,13 @@ If your Blynk Project provides a temperature sensor with a fan mounted outside, 
 Python 3.6.5 or newer is recommended. Make sure you have installed Python depedencies:
 
 ```sh
-PyYAML>=3.12
-certifi>=2018.4.16
-chardet>=3.0.4
-idna>=2.6
-pytz>=2018.4
-requests>=2.18.4
-urllib3>=1.22
+PyYAML>=4.2b1
+certifi==2018.4.16
+chardet==3.0.4
+idna==2.6
+pytz==2018.4
+requests>=2.20.0
+urllib3>=1.24.2
 ```
 
 Create config.yml file and enter your API keys:
@@ -73,12 +73,16 @@ python3 weather.py
 
 Default Virtual Pins are listed below:
 
+- V36: Air Quality Color
+- V37: Air Quality Description
+- V38: Humidity
+- V39: PM 1
 - V40: PM 2.5
 - V41: PM 10
 - V42: Air Pollution Level
 - V43: Temperature
-- V44: Air CAQI Pollution Level
-- V45: Fan (favourable conditions) [0 or 1]
+- V44: Air Quality Index - CAQI
+- V45: Temperature Sensor's Fan favourable conditions (based on weather conditions) [0 or 1]
 - V46: Date and time of data update
 - V47: Wind Speed
 - V48: Wind Direction

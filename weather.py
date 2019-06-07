@@ -7,7 +7,7 @@ from pytz import timezone
 
 
 # CONFIG FILE
-with open("/home/blynk/smog/config.yml", 'r') as ymlfile:
+with open("config.yml", 'r') as ymlfile:
     cfg = yaml.load(ymlfile)
 
 # SERVER INFO
@@ -121,8 +121,9 @@ for airlyResult in airlyData["current"]["values"]:
         if airlyResult["name"] == "TEMPERATURE":
                 airlyTemp = int(airlyResult["value"])
 
+				
 # AIRLY CAQI - Air Quality Index
-airlyCAQI = str(int(airlyData["current"]["indexes"][0]["value"]))
+airlyCAQI = str(airlyData["current"]["indexes"][0]["value"])
 airlyLevel = str(airlyData["current"]["indexes"][0]["level"])
 airlyDescription = str(airlyData["current"]["indexes"][0]["description"])
 airlyColor = str(airlyData["current"]["indexes"][0]["color"])
@@ -142,7 +143,7 @@ airlyLevel = airlyLevelInt(airlyLevel)
 
 # Select available temperature data
 bTemp = None
-if airlyTemp:
+if 'airlyTemp' in globals():
         bTemp = airlyTemp
         bTemp = str("%.1f" % bTemp)
 else:

@@ -8,7 +8,7 @@ from pytz import timezone
 
 # CONFIG FILE
 with open("config.yml", 'r') as ymlfile:
-    cfg = yaml.load(ymlfile)
+    cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
 
 # SERVER INFO
 serverName = cfg["server"]["name"]
@@ -35,7 +35,7 @@ blynkApiKey = cfg["apiKeys"]["blynkKey"]
 blynkHostname = cfg["blynkServer"]["hostname"]
 blynkPort = cfg["blynkServer"]["port"]
 
-# OPENSTREETMAP
+# OPEN STREET MAP
 oUrl = 'http://api.openweathermap.org/data/2.5/weather?id=' + owmCityId + '&&lang=' + serverLang +'&units=' + units + '&appid=' + owmApiKey
 oResp = requests.get(url=oUrl)
 oData = json.loads(oResp.text)
@@ -71,7 +71,7 @@ else:
     logging.info("Fan disabled")
 
 # Yahoo condition code to Polish string
-if serverLang is "pl":
+if serverLang == "pl":
     def ycondpl(yCondition):
         return {
             28: 'Zachmurzenie',
@@ -206,5 +206,6 @@ if bPressure:
     requests.get(blynkUrl + "V49?value=" + bPressure)
 if fanState:
     requests.get(blynkUrl + "V45?value=" + fanState)
-requests.get(blynkUrl + "V46?value=" + fDate)
-requests.get(blynkUrl + "V71?value=" + serverName)
+print(requests.get(blynkUrl + "V46?value=" + fDate))
+blynkUrl + "V71?value=" + serverName
+

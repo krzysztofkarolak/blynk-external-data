@@ -13,14 +13,14 @@ If your Blynk Project provides a temperature sensor with a fan mounted outside, 
 
 ## Configuration
 
-Python 3.6.5 or newer is recommended. Make sure you have installed Python depedencies:
+Python 3.11 or newer is recommended. Make sure you have installed Python depedencies:
 
 ```sh
 PyYAML>=4.2b1
-certifi==2018.4.16
-chardet==3.0.4
-idna==2.6
-pytz==2018.4
+certifi>=2018.4.16
+chardet>=3.0.4
+idna>=2.6
+pytz>=2018.4
 requests>=2.20.0
 urllib3>=1.24.2
 ```
@@ -51,7 +51,7 @@ devices:
 
 ## Deploying to Heroku
 
-This app was intended to work on Heroku service. You can easily deploy it to Heroku instance:
+This app was intended to work in Heroku or GCP CloudFunction. You can easily deploy it to Heroku instance:
 
 ```sh
 $ heroku create
@@ -60,13 +60,11 @@ $ git commit -am "First commit"
 $ git push heroku master
 
 ```
-or
+or in GCP Cloud Functions:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-Set a Heroku Scheduler plugin with the following command:
 ```sh
-python3 weather.py
+$ gcloud functions deploy function-name --runtime python311 --entry-point=BlynkExternalData
+
 ```
 
 ## Blynk Project Configuration

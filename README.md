@@ -49,9 +49,9 @@ devices:
     fan: true # If there is a fan in your temperature sensor, leave this option true
 ```
 
-## Deploying to Heroku
+## Deploying code
 
-This app was intended to work in Heroku or GCP CloudFunction. You can easily deploy it to Heroku instance:
+This app was intended to work in Heroku or GCP Cloud Functions. You can easily deploy it to Heroku instance:
 
 ```sh
 $ heroku create
